@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from sklearn.ensemble import RandomForestRegressor
+import base64
 
 @st.cache_resource
 # Load models
@@ -10,21 +10,43 @@ def load_model(model_path):
     with open(model_path, 'rb') as file:
         return pickle.load(file)
     
-model_car=load_model("predicted_model.pkl")
+def set_background_image_local():
+    image_path = "G:\\Data Science\\project\\Streamlit\\env\\Scripts\\car\\headlights-car.jpg"
+    with open(image_path, "rb") as file:
+        data = file.read()
+    base64_image = base64.b64encode(data).decode("utf-8")
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/png;base64,{base64_image}");
+            background-size: contain;
+            background-position: fit;
+            background-repeat: repeat;
+            background-attachment: fixed;
+        }}     
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-encoder_city=load_model("encoder_city.pkl")
-encoder_model=load_model("encoder_model.pkl")
-encoder_insurance=load_model("encoder_insurance.pkl")
-encoder_fuel_type=load_model("encoder_fuel_type.pkl")
-encoder_transmission=load_model("encoder_transmission.pkl")
-encoder_ownership=load_model("encoder_ownership.pkl")
+set_background_image_local()
+    
+model_car=load_model("G:\\Data Science\\project\\Streamlit\\env\\Scripts\\car\\RandomForestRegressor.pkl")
+
+encoder_city=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_city.pkl")
+encoder_model=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_model.pkl")
+encoder_insurance=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_insurance.pkl")
+encoder_fuel_type=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_fuel_type.pkl")
+encoder_transmission=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_transmission.pkl")
+encoder_ownership=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_ownership.pkl")
 
 st.title("Car Price Prediction App")
-df=pd.read_csv("Final_UsedCars_Data.csv")
+df=pd.read_csv("G:/Data Science/project/Streamlit/env/Scripts/car/Final_UsedCars_Data.csv")
 categorical_features = ["city", "model", "insurance", "fuel_type", "transmission", "ownership"]
 dropdown_options = {feature: df[feature].unique().tolist() for feature in categorical_features}
 
-tab1, tab2 = st.tabs(["Home", "Predict"])
+tab1, tab2 = st.tabs(["Home","Predict"])
 
 with tab1:
     st.markdown("""
@@ -83,4 +105,4 @@ with tab2:
     
         
         st.subheader("Predicted Car Price")
-        st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")
+        st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
