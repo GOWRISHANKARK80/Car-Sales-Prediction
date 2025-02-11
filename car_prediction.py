@@ -29,7 +29,7 @@ def set_background_image_local(image_path):
         unsafe_allow_html=True
     )
 
-set_background_image_local("G:\\Data Science\\project\\Streamlit\\env\\Scripts\\car\\headlights-car.jpg")
+set_background_image_local(r"headlights-car.jpg")
     
 model_car=load_model("G:\\Data Science\\project\\Streamlit\\env\\Scripts\\car\\RandomForestRegressor.pkl")
 
