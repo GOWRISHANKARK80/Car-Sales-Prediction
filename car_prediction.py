@@ -31,7 +31,7 @@ def set_background_image_local(image_path):
 
 set_background_image_local(r"headlights-car.jpg")
     
-model_car=load_model("G:\\Data Science\\project\\Streamlit\\env\\Scripts\\car\\RandomForestRegressor.pkl")
+model_car=load_model("RandomForestRegressor.pkl")
 
 encoder_city=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_city.pkl")
 encoder_model=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_model.pkl")
