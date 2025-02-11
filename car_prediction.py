@@ -33,15 +33,15 @@ set_background_image_local(r"headlights-car.jpg")
     
 model_car=load_model("RandomForestRegressor.pkl")
 
-encoder_city=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_city.pkl")
-encoder_model=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_model.pkl")
-encoder_insurance=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_insurance.pkl")
-encoder_fuel_type=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_fuel_type.pkl")
-encoder_transmission=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_transmission.pkl")
-encoder_ownership=load_model("G:/Data Science/project/Streamlit/env/Scripts/car/encoder_ownership.pkl")
+encoder_city=load_model("encoder_city.pkl")
+encoder_model=load_model("encoder_model.pkl")
+encoder_insurance=load_model("encoder_insurance.pkl")
+encoder_fuel_type=load_model("encoder_fuel_type.pkl")
+encoder_transmission=load_model("encoder_transmission.pkl")
+encoder_ownership=load_model("encoder_ownership.pkl")
 
 st.title("Car Price Prediction App")
-df=pd.read_csv("G:/Data Science/project/Streamlit/env/Scripts/car/Final_UsedCars_Data.csv")
+df=pd.read_csv("Final_UsedCars_Data.csv")
 categorical_features = ["city", "model", "insurance", "fuel_type", "transmission", "ownership"]
 dropdown_options = {feature: df[feature].unique().tolist() for feature in categorical_features}
 
