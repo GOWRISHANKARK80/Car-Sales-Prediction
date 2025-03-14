@@ -127,9 +127,6 @@ with tab3:
     user_input = st.text_input("You: ", "")
     if user_input:
         response = chatbot_response(user_input)
-        st.text_area("Chatbot:", response, height=100)
-    
-        
-            
-            st.subheader("Predicted Car Price")
-            st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
+        st.text_area("Chatbot:", response, height=100)        
+        st.subheader("Predicted Car Price")
+        st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
