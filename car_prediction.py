@@ -106,7 +106,7 @@ with tab3:
     import numpy as np
     
     # Load the trained model
-    with open("car_price_model.pkl", "rb") as file:
+    with open("RandomForestRegressor.pkl", "rb") as file:
         model = pickle.load(file)
     
     # Chatbot function
