@@ -105,30 +105,45 @@ with tab2:
         st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
         
 with tab3:
-    import pickle
-    import numpy as np
+    import streamlit as st
+    import pandas as pd
     
-    # Load the trained model
-    with open("RandomForestRegressor.pkl", "rb") as file:
-        model = pickle.load(file)
+    # Load the dataset
+    df = pd.read_csv("Final_UsedCars_Data.csv")
     
-    # Chatbot function
-    def chatbot_response(user_input):
-        try:
-            # Expecting user input as comma-separated values
-            features = np.array([float(x) for x in user_input.split(",")]).reshape(1, -1)
-            prediction = model.predict(features)[0]
-            return f"Estimated Car Price: ₹{prediction:,.2f}"
-        except:
-            return "Invalid input! Please enter numeric values separated by commas."
+    # Function to get car details
+    def get_car_details(car_name):
+        car_info = df[df["model"].str.contains(car_name, case=False, na=False)]
+        if not car_info.empty:
+            return car_info.to_dict(orient="records")
+        else:
+            return "Sorry, no details found for this car."
     
     # Streamlit UI
-    st.title("🚗 Car Price Prediction Chatbot")
-    st.write("Enter car details as comma-separated values (e.g., Year, Mileage, Engine Size, etc.)")
+    st.title("🚘 Used Car Info Chatbot")
+    st.write("Ask about any car model, and I'll provide the details!")
     
-    # Chatbot interaction
-    user_input = st.text_input("You: ", "")
-    if user_input:
-        response = chatbot_response(user_input)
-        st.text_area("Chatbot:", response, height=100)        
+    # User input
+    user_query = st.text_input("You: ", "")
+    
+    if user_query:
+        response = get_car_details(user_query)
+        st.write("**Chatbot:**")
+        if isinstance(response, list):
+            for car in response:
+                st.write(f"**Model:** {car['model']}")
+                st.write(f"**Year:** {int(car['year_of_manufacture'])}")
+                st.write(f"**Fuel Type:** {car['fuel_type']}")
+                st.write(f"**Seats:** {car['seats']}")
+                st.write(f"**KMs Driven:** {car['kms_driven']}")
+                st.write(f"**Transmission:** {car['transmission']}")
+                st.write(f"**Engine:** {car['engine']} cc")
+                st.write(f"**Power:** {car['power']} bhp")
+                st.write(f"**Mileage:** {car['mileage']} kmpl")
+                st.write(f"**Ownership:** {car['ownership']}")
+                st.write(f"**Insurance:** {car['insurance']}")
+                st.write(f"**Price:** ₹{car['price']:,.2f}")
+                st.write("---")
+        else:
+            st.write(response)
 
