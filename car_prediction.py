@@ -101,6 +101,9 @@ with tab2:
         input_df=pd.DataFrame([input_data])
         # Call prediction function
         predicted_price = model_car.predict(input_df)
+        st.subheader("Predicted Car Price")
+        st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
+        
 with tab3:
     import pickle
     import numpy as np
@@ -128,5 +131,4 @@ with tab3:
     if user_input:
         response = chatbot_response(user_input)
         st.text_area("Chatbot:", response, height=100)        
-        st.subheader("Predicted Car Price")
-        st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
+
