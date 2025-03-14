@@ -45,7 +45,7 @@ df=pd.read_csv("Final_UsedCars_Data.csv")
 categorical_features = ["city", "model", "insurance", "fuel_type", "transmission", "ownership"]
 dropdown_options = {feature: df[feature].unique().tolist() for feature in categorical_features}
 
-tab1, tab2 = st.tabs(["Home","Predict"])
+tab1, tab2, tab3 = st.tabs(["Home","Predict","ChatBot"])
 
 with tab1:
     st.markdown("""
@@ -101,7 +101,35 @@ with tab2:
         input_df=pd.DataFrame([input_data])
         # Call prediction function
         predicted_price = model_car.predict(input_df)
+with tab3:
+    import pickle
+    import numpy as np
+    
+    # Load the trained model
+    with open("car_price_model.pkl", "rb") as file:
+        model = pickle.load(file)
+    
+    # Chatbot function
+    def chatbot_response(user_input):
+        try:
+            # Expecting user input as comma-separated values
+            features = np.array([float(x) for x in user_input.split(",")]).reshape(1, -1)
+            prediction = model.predict(features)[0]
+            return f"Estimated Car Price: ₹{prediction:,.2f}"
+        except:
+            return "Invalid input! Please enter numeric values separated by commas."
+    
+    # Streamlit UI
+    st.title("🚗 Car Price Prediction Chatbot")
+    st.write("Enter car details as comma-separated values (e.g., Year, Mileage, Engine Size, etc.)")
+    
+    # Chatbot interaction
+    user_input = st.text_input("You: ", "")
+    if user_input:
+        response = chatbot_response(user_input)
+        st.text_area("Chatbot:", response, height=100)
     
         
-        st.subheader("Predicted Car Price")
-        st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
+            
+            st.subheader("Predicted Car Price")
+            st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
