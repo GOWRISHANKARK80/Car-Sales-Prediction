@@ -107,24 +107,34 @@ with tab2:
 with tab3:
     st.header("🚘 Used Car Info Chatbot")
     st.write("Ask about any car brand, and I'll provide the details!")
-import streamlit as st
 import requests
+import streamlit as st
 
 def get_car_details(car_name):
     url = f"https://www.carqueryapi.com/api/0.3/?cmd=getTrims&keyword={car_name}"
-    response = requests.get(url).json()
 
-    if "trims" in response:
-        return response["trims"][0]  # Get first matching car details
-    else:
-        return "Sorry, no details found for this car."
+    try:
+        response = requests.get(url)
 
+        # Check if the response is in JSON format
+        try:
+            data = response.json()
+        except requests.exceptions.JSONDecodeError:
+            return "Error: API response is not in JSON format."
+
+        # Validate API response content
+        if "trims" in data and data["trims"]:
+            return data["trims"][0]  # Return first car match
+        else:
+            return "No details found for this car."
+
+    except requests.exceptions.RequestException as e:
+        return f"Request failed: {str(e)}"
+
+# Streamlit UI
 st.title("🚗 Car Info Chatbot")
 car_name = st.text_input("Enter Car Name:")
 
 if st.button("Get Details"):
-    if car_name:
-        details = get_car_details(car_name)
-        st.write(details)
-    else:
-        st.warning("Please enter a car name.")
+    details = get_car_details(car_name)
+    st.write(details)
