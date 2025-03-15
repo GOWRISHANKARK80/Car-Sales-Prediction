@@ -116,22 +116,14 @@ with tab3:
     if "model" in df_chatbot.columns:
         df_chatbot["model"] = df_chatbot["model"].astype(str).str.strip()  # Clean data
 
-        # Create a known brand list (expand if needed)
-        known_brands = ["Honda", "Hyundai", "Toyota", "Maruti", "BMW", "Mercedes", "Tata", "Ford", "Volkswagen", "Renault", "Audi", "MG", "Kia", "Mahindra", "Nissan", "Jeep", "Skoda", "Datsun", "Chevrolet"]
+        # Extract brand name (first word of model name)
+        df_chatbot["brand"] = df_chatbot["model"].apply(lambda x: x.split()[0] if len(x.split()) > 0 else "").str.lower()
 
-        # Function to assign correct brand
-        def get_brand(model_name):
-            for brand in known_brands:
-                if brand.lower() in model_name.lower():
-                    return brand.lower()  # Return lowercase for uniformity
-            return "unknown"  # If no brand found
-
-        # Apply function to extract brand names
-        df_chatbot["brand"] = df_chatbot["model"].apply(get_brand)
-
-        # Display available brands for reference
+        # Get unique brands for reference
         available_brands = df_chatbot["brand"].unique().tolist()
-        st.write("Available Brands in Dataset:", available_brands)
+
+        # Show available brands for debugging
+        st.write("Available Brands in Dataset:", available_brands[:20])  # Show first 20
 
         # User input
         brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
@@ -140,9 +132,17 @@ with tab3:
             # Filter dataset for matching brand
             brand_cars = df_chatbot[df_chatbot["brand"] == brand_name]
 
-            # Display results
+            # Display results in two-column format
             if not brand_cars.empty:
-                st.write(brand_cars)
+                for index, row in brand_cars.iterrows():
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.write(f"**Model:** {row['model']}")
+                        st.write(f"**Year:** {row.get('year_of_manufacture', 'N/A')}")
+                    with col2:
+                        st.write(f"**Fuel Type:** {row.get('fuel_type', 'N/A')}")
+                        st.write(f"**Transmission:** {row.get('transmission', 'N/A')}")
+                        st.write("---")  # Add a separator between entries
             else:
                 st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
     else:
