@@ -112,25 +112,28 @@ with tab3:
     file_path = "Final_UsedCars_Data_chatbot.csv"
     df_chatbot = pd.read_csv(file_path)
 
-    # Ensure 'model' column exists
-    if "model" in df_chatbot.columns:
-        # Strip spaces and convert to lowercase
-        df_chatbot["model"] = df_chatbot["model"].astype(str).str.strip().str.lower()
+    # Define known car brands (extend this list if needed)
+    known_brands = ["Honda", "Hyundai", "Toyota", "BMW", "Mercedes", "Audi", "Maruti", "Ford", "Volkswagen", "Tata", "Mahindra"]
 
-        # Extract the first word as the brand name
-        df_chatbot["brand"] = df_chatbot["model"].apply(lambda x: x.split()[0] if len(x.split()) > 0 else "")
+    # Function to find brand from model name
+    def extract_brand(model_name):
+        for brand in known_brands:
+            if brand.lower() in model_name.lower():
+                return brand
+        return "Unknown"
 
-        # User input
-        brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
+    # Apply the function to extract brand names
+    df_chatbot["brand"] = df_chatbot["model"].astype(str).apply(extract_brand)
 
-        if brand_name:
-            # Filter dataset based on brand name
-            brand_cars = df_chatbot[df_chatbot["brand"] == brand_name]
+    # User input
+    brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
 
-            # Display results
-            if not brand_cars.empty:
-                st.write(brand_cars)
-            else:
-                st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
-    else:
-        st.error("The dataset does not contain a 'model' column.")
+    if brand_name:
+        # Filter dataset based on extracted brand
+        brand_cars = df_chatbot[df_chatbot["brand"].str.lower() == brand_name]
+
+        # Display results
+        if not brand_cars.empty:
+            st.write(brand_cars)
+        else:
+            st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
