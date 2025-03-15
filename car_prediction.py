@@ -104,36 +104,52 @@ with tab2:
         st.subheader("Predicted Car Price")
         st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
         
+
 with tab3:
     st.header("🚘 Used Car Info Chatbot")
     st.write("Ask about any car brand, and I'll provide the details!")
-import requests
-import streamlit as st
 
-def get_car_details(car_name):
-    url = f"https://www.carqueryapi.com/api/0.3/?cmd=getTrims&keyword={car_name}"
+    # Load the dataset
+    file_path = "Final_UsedCars_Data_chatbot.csv"
+    df_chatbot = pd.read_csv(file_path)
 
-    try:
-        response = requests.get(url)
+    # Ensure 'model' column exists
+    if "model" in df_chatbot.columns:
+        df_chatbot["model"] = df_chatbot["model"].astype(str).str.strip()  # Clean data
 
-        # Check if the response is in JSON format
-        try:
-            data = response.json()
-        except requests.exceptions.JSONDecodeError:
-            return "Error: API response is not in JSON format."
+        # Extract brand name (first word of model name)
+        df_chatbot["brand"] = df_chatbot["model"].apply(lambda x: x.split()[0] if len(x.split()) > 0 else "").str.lower()
 
-        # Validate API response content
-        if "trims" in data and data["trims"]:
-            return data["trims"][0]  # Return first car match
-        else:
-            return "No details found for this car."
+        # Get unique brands for reference
+        available_brands = df_chatbot["brand"].unique().tolist()
 
-    except requests.exceptions.RequestException as e:
-        return f"Request failed: {str(e)}"
+        # Format the brand list into multiple columns for better readability
+        num_columns = 5  # Adjust this based on screen width
+        formatted_brands = ""
 
-# Streamlit UI
-st.title("🚗 Car Info Chatbot")
-car_name = st.text_input("Enter Car Name:")
+        for i, brand in enumerate(available_brands):
+            formatted_brands += f"{i}: {brand}".ljust(20)  # Align text properly
+            if (i + 1) % num_columns == 0:  # Break line after 'num_columns' entries
+                formatted_brands += "\n"
+
+        st.write("**Available Brands in Dataset:**")
+        st.markdown(f"```\n{formatted_brands}\n```")  # Display in clean format
+
+        # User input
+        brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
+
+        if brand_name:
+            # Filter dataset for matching brand
+            brand_cars = df_chatbot[df_chatbot["brand"] == brand_name]
+
+            # Display results
+            if not brand_cars.empty:
+                st.write(brand_cars)
+            else:
+                st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
+    else:
+        st.error("The dataset does not contain a 'model' column.")
+
 
 if st.button("Get Details"):
     details = get_car_details(car_name)
