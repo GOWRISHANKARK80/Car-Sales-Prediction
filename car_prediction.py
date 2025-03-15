@@ -122,15 +122,17 @@ with tab3:
         # Get unique brands for reference
         available_brands = df_chatbot["brand"].unique().tolist()
 
-        # Format the brand list in two-line display
+        # Format the brand list into multiple columns for better readability
+        num_columns = 5  # Adjust this based on screen width
         formatted_brands = ""
+
         for i, brand in enumerate(available_brands):
-            formatted_brands += f"{i}: {brand}\t"
-            if (i + 1) % 5 == 0:  # Break line after every 5 brands
+            formatted_brands += f"{i}: {brand}".ljust(20)  # Align text properly
+            if (i + 1) % num_columns == 0:  # Break line after 'num_columns' entries
                 formatted_brands += "\n"
 
         st.write("**Available Brands in Dataset:**")
-        st.markdown(f"```\n{formatted_brands}\n```")  # Display in a clean format
+        st.markdown(f"```\n{formatted_brands}\n```")  # Display in clean format
 
         # User input
         brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
@@ -146,4 +148,3 @@ with tab3:
                 st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
     else:
         st.error("The dataset does not contain a 'model' column.")
-
