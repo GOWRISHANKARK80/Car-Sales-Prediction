@@ -109,7 +109,7 @@ with tab3:
     st.write("Ask about any car brand, and I'll provide the details!")
 
     # Load the dataset
-    file_path = "Final_UsedCars_Data.csv"
+    file_path = "Final_UsedCars_Data_chatbot.csv"
     df_chatbot = pd.read_csv(file_path)
 
     # Ensure 'model' column exists
