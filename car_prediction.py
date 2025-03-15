@@ -122,8 +122,15 @@ with tab3:
         # Get unique brands for reference
         available_brands = df_chatbot["brand"].unique().tolist()
 
-        # Show available brands for debugging
-        st.write("Available Brands in Dataset:", available_brands[:20])  # Show first 20
+        # Format the brand list in two-line display
+        formatted_brands = ""
+        for i, brand in enumerate(available_brands):
+            formatted_brands += f"{i}: {brand}\t"
+            if (i + 1) % 5 == 0:  # Break line after every 5 brands
+                formatted_brands += "\n"
+
+        st.write("**Available Brands in Dataset:**")
+        st.markdown(f"```\n{formatted_brands}\n```")  # Display in a clean format
 
         # User input
         brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
@@ -132,18 +139,11 @@ with tab3:
             # Filter dataset for matching brand
             brand_cars = df_chatbot[df_chatbot["brand"] == brand_name]
 
-            # Display results in two-column format
+            # Display results
             if not brand_cars.empty:
-                for index, row in brand_cars.iterrows():
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.write(f"**Model:** {row['model']}")
-                        st.write(f"**Year:** {row.get('year_of_manufacture', 'N/A')}")
-                    with col2:
-                        st.write(f"**Fuel Type:** {row.get('fuel_type', 'N/A')}")
-                        st.write(f"**Transmission:** {row.get('transmission', 'N/A')}")
-                        st.write("---")  # Add a separator between entries
+                st.write(brand_cars)
             else:
                 st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
     else:
         st.error("The dataset does not contain a 'model' column.")
+
