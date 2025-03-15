@@ -149,8 +149,3 @@ with tab3:
                 st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
     else:
         st.error("The dataset does not contain a 'model' column.")
-
-
-if st.button("Get Details"):
-    details = get_car_details(car_name)
-    st.write(details)
