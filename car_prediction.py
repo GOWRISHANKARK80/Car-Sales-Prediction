@@ -105,45 +105,31 @@ with tab2:
         st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
         
 with tab3:
-    import streamlit as st
-    import pandas as pd
-    
-    # Load the dataset
-    df = pd.read_csv("Final_UsedCars_Data.csv")
-    
-    # Function to get car details
-    def get_car_details(car_name):
-        car_info = df[df["model"].str.contains(car_name, case=False, na=False)]
-        if not car_info.empty:
-            return car_info.to_dict(orient="records")
-        else:
-            return "Sorry, no details found for this car."
-    
-    # Streamlit UI
-    st.title("🚘 Used Car Info Chatbot")
-    st.write("Ask about any car model, and I'll provide the details!")
-    
-    # User input
-    user_query = st.text_input("You: ", "")
-    
-    if user_query:
-        response = get_car_details(user_query)
-        st.write("**Chatbot:**")
-        if isinstance(response, list):
-            for car in response:
-                st.write(f"**Model:** {car['model']}")
-                st.write(f"**Year:** {int(car['year_of_manufacture'])}")
-                st.write(f"**Fuel Type:** {car['fuel_type']}")
-                st.write(f"**Seats:** {car['seats']}")
-                st.write(f"**KMs Driven:** {car['kms_driven']}")
-                st.write(f"**Transmission:** {car['transmission']}")
-                st.write(f"**Engine:** {car['engine']} cc")
-                st.write(f"**Power:** {car['power']} bhp")
-                st.write(f"**Mileage:** {car['mileage']} kmpl")
-                st.write(f"**Ownership:** {car['ownership']}")
-                st.write(f"**Insurance:** {car['insurance']}")
-                st.write(f"**Price:** ₹{car['price']:,.2f}")
-                st.write("---")
-        else:
-            st.write(response)
+    st.header("ChatBot")
+    st.write("Enter a car brand name to see details of available cars.")
 
+    # Load the dataset
+    file_path = "Final_UsedCars_Data_chatbot.csv"  # Ensure this is the correct dataset
+    df_chatbot = pd.read_csv(file_path)
+
+    # Check for the column containing brand names
+    brand_column = "brand"  # Change if your column name differs
+
+    # Display column names for debugging
+    # st.write(df_chatbot.columns)  # Uncomment this line if unsure about column names
+
+    # User input for brand name
+    brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
+
+    if brand_name:
+        if brand_column in df_chatbot.columns:
+            # Filter dataset based on brand name (case-insensitive)
+            brand_cars = df_chatbot[df_chatbot[brand_column].str.lower().str.contains(brand_name, na=False)]
+            
+            # Display results
+            if not brand_cars.empty:
+                st.write(brand_cars)
+            else:
+                st.write("No cars found for this brand. Please try another brand name.")
+        else:
+            st.write("Brand column not found in the dataset. Please check the dataset format.")
