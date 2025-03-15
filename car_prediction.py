@@ -119,13 +119,25 @@ with tab3:
         # Extract brand name (first word of model name)
         df_chatbot["brand"] = df_chatbot["model"].apply(lambda x: x.split()[0] if len(x.split()) > 0 else "").str.lower()
 
-        # Get unique brands for dropdown
-        available_brands = sorted(df_chatbot["brand"].unique().tolist())  # Sorted for better UX
+        # Get unique brands for reference
+        available_brands = df_chatbot["brand"].unique().tolist()
 
-        # Dropdown for brand selection
-        brand_name = st.selectbox("Select a Car Brand:", ["Select a brand"] + available_brands)
+        # Format the brand list into multiple columns for better readability
+        num_columns = 5  # Adjust this based on screen width
+        formatted_brands = ""
 
-        if brand_name != "Select a brand":
+        for i, brand in enumerate(available_brands):
+            formatted_brands += f"{i}: {brand}".ljust(20)  # Align text properly
+            if (i + 1) % num_columns == 0:  # Break line after 'num_columns' entries
+                formatted_brands += "\n"
+
+        st.write("**Available Brands in Dataset:**")
+        st.markdown(f"```\n{formatted_brands}\n```")  # Display in clean format
+
+        # User input
+        brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
+
+        if brand_name:
             # Filter dataset for matching brand
             brand_cars = df_chatbot[df_chatbot["brand"] == brand_name]
 
