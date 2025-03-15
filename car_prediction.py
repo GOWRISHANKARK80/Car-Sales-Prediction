@@ -105,31 +105,28 @@ with tab2:
         st.markdown(f"### :green[₹ {predicted_price[0]:,.2f}]")   
         
 with tab3:
-    st.header("ChatBot")
-    st.write("Enter a car brand name to see details of available cars.")
+    st.header("🚘 Used Car Info Chatbot")
+    st.write("Ask about any car brand, and I'll provide the details!")
 
     # Load the dataset
-    file_path = "Final_UsedCars_Data_chatbot.csv"  # Ensure this is the correct dataset
+    file_path = "Final_UsedCars_Data.csv"
     df_chatbot = pd.read_csv(file_path)
 
-    # Check for the column containing brand names
-    brand_column = "brand"  # Change if your column name differs
+    # Extract brand name from model
+    df_chatbot["brand"] = df_chatbot["model"].apply(lambda x: str(x).split()[0])
 
-    # Display column names for debugging
-    # st.write(df_chatbot.columns)  # Uncomment this line if unsure about column names
-
-    # User input for brand name
+    # User input for brand search
     brand_name = st.text_input("Enter Car Brand Name:").strip().lower()
 
     if brand_name:
-        if brand_column in df_chatbot.columns:
-            # Filter dataset based on brand name (case-insensitive)
-            brand_cars = df_chatbot[df_chatbot[brand_column].str.lower().str.contains(brand_name, na=False)]
-            
-            # Display results
-            if not brand_cars.empty:
-                st.write(brand_cars)
-            else:
-                st.write("No cars found for this brand. Please try another brand name.")
+        # Normalize data for better matching
+        df_chatbot["brand"] = df_chatbot["brand"].str.lower().str.strip()
+
+        # Filter dataset based on brand name
+        brand_cars = df_chatbot[df_chatbot["brand"].str.contains(brand_name, na=False, regex=False)]
+
+        # Display results
+        if not brand_cars.empty:
+            st.write(brand_cars)
         else:
-            st.write("Brand column not found in the dataset. Please check the dataset format.")
+            st.warning(f"Sorry, no details found for '{brand_name}'. Try another brand.")
